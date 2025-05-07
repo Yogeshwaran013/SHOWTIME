@@ -133,6 +133,14 @@ export default function BookingPage() {
 
     try {
       const showDate = new Date().toISOString().split('T')[0];
+      const userEmail = sessionStorage.getItem('userEmail');
+      
+      if (!userEmail) {
+        alert('Please login to book tickets');
+        navigate('/', { replace: true });
+        return;
+      }
+
       const bookingData = {
         movieId,
         movieTitle: movieDetails.title,
@@ -140,7 +148,7 @@ export default function BookingPage() {
         showTime: time,
         seats: selectedSeats,
         totalAmount: calculateTotal(),
-        userEmail: 'guest@gmail.com',
+        userEmail: userEmail,
         showDate: showDate
       };
 

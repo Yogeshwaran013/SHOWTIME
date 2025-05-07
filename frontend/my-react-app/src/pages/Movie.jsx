@@ -134,7 +134,7 @@ export default function Movies() {
               <h3>{movie.title}</h3>
               <p className="screen-info">Screen {movie.screen}</p>
               <p className="release-date">Release: {new Date(movie.release_date).toLocaleDateString()}</p>
-              <div className="show-times">
+              {/* <div className="show-times">
                 {movie.showTimes.map((time, index) => (
                   <button
                     key={index}
@@ -144,8 +144,8 @@ export default function Movies() {
                     {time}
                   </button>
                 ))}
-              </div>
-              <p>Price: ₹{movie.price}</p>
+              </div> */}
+              {/* <p>Price: ₹{movie.price}</p> */}
             </div>
           </div>
         ))}
