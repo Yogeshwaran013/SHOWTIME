@@ -1,0 +1,103 @@
+.profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: #192133;
+    min-height: 100vh;
+    color: white;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.profile-photo-container {
+    position: relative;
+    text-align: center;
+}
+
+.profile-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #e50914;
+}
+
+.photo-upload-btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #e50914;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.photo-upload-btn:hover {
+    background: #ff0a16;
+}
+
+.profile-info h1 {
+    margin: 0;
+    font-size: 2rem;
+    color: white;
+}
+
+.profile-info p {
+    margin: 0.5rem 0;
+    color: #ccc;
+}
+
+.booking-history {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 8px;
+}
+
+.booking-history h2 {
+    margin-top: 0;
+    color: white;
+    border-bottom: 2px solid #e50914;
+    padding-bottom: 0.5rem;
+}
+
+.bookings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.booking-card {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.booking-card h3 {
+    margin: 0 0 1rem 0;
+    color: #e50914;
+}
+
+.booking-details p {
+    margin: 0.5rem 0;
+    color: #ddd;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 1.5rem;
+    color: white;
+}

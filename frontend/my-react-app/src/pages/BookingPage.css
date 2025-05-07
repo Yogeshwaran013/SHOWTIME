@@ -1,0 +1,376 @@
+.booking-page {
+  background: linear-gradient(to bottom, #192133 0%, #111826 100%);
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  color: #ffffff;
+}
+
+.movie-details {
+  position: relative;
+  display: flex;
+  padding: 3rem 4rem;
+  gap: 3rem;
+  background: linear-gradient(90deg, #192133 50%, transparent 100%);
+  margin-bottom: 2rem;
+  min-height: 500px;
+}
+
+.movie-details::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.4;
+  z-index: -1;
+}
+
+.movie-poster {
+  flex-shrink: 0;
+  position: relative;
+}
+
+.movie-poster img {
+  width: 300px;
+  height: 450px;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease;
+}
+
+.movie-poster img:hover {
+  transform: scale(1.02);
+}
+
+.movie-info {
+  flex-grow: 1;
+  max-width: 800px;
+  padding-top: 2rem;
+}
+
+.movie-info h1 {
+  font-size: 4rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  letter-spacing: -1px;
+  line-height: 1.1;
+  background: linear-gradient(to right, #ffffff, #b3b3b3);
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent; /* Fallback for browsers that don't support background-clip */
+}
+
+.movie-overview {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #e6e6e6;
+  margin-bottom: 2.5rem;
+  max-width: 700px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-weight: 300;
+  letter-spacing: 0.3px;
+}
+
+.movie-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.movie-metadata p {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-size: 1rem;
+  color: #ffffff;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.details {
+  flex: 1;
+}
+
+.details h2 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.booking-section {
+  margin-top: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.showtimes {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 15px 0;
+}
+
+.showtime-btn {
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.showtime-btn.selected {
+  background: #e50914;
+  color: white;
+  border-color: #e50914;
+}
+
+.seat-layout {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+  padding: 20px;
+  background: #f8f8f8;
+
+  border-radius: 8px;
+}
+
+.seat {
+  width: 35px;
+  height: 35px;
+  color:black;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2px;
+  padding: 0;
+}
+
+.seat:hover:not(:disabled) {
+  transform: scale(1.1);
+  border-color: #e50914;
+}
+
+.seat.selected {
+  background: #e50914;
+  color: white;
+  border-color: #e50914;
+}
+
+.seat.premium {
+  border-color: #ffd700;
+}
+
+.seat.standard {
+  border-color: #c0c0c0;
+}
+
+.seat.budget {
+  border-color: #cd7f32;
+}
+
+.seat.booked {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+  border-color: #999999;
+}
+
+.seat.booked:hover {
+  transform: none;
+  border-color: #999999;
+}
+
+/* Add tooltip for booked seats */
+.seat[disabled] {
+  position: relative;
+}
+
+.seat[disabled]:hover::after {
+  content: 'Already Booked';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+.booking-summary {
+  background: rgba(25, 33, 51, 0.95);
+  padding: 2rem;
+  border-radius: 12px;
+  margin: 2rem 4rem;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.booking-summary h3 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.booking-summary p {
+  color: #cccccc;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.book-button {
+  width: 100%;
+  padding: 15px;
+  background: #e50914;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.book-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.confirm-booking {
+  width: 100%;
+  padding: 1.2rem;
+  background: linear-gradient(45deg, #e50914, #ff3b30);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+}
+
+.confirm-booking:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4);
+  background: linear-gradient(45deg, #ff0a16, #ff4b44);
+}
+
+.confirm-booking:disabled {
+  background: linear-gradient(45deg, #4a4a4a, #3a3a3a);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.loading-container,
+.error-container {
+  text-align: center;
+  padding: 3rem;
+  margin: 2rem 4rem;
+  background: rgba(25, 33, 51, 0.95);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.theater-info {
+  background: rgba(255, 255, 255, 0.05);
+  margin: 0 4rem 2rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.theater-info h2 {
+  font-size: 1.8rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.theater-info p {
+  color: #cccccc;
+  font-size: 1.2rem;
+}
+
+.screen {
+  background: linear-gradient(to bottom, #ffffff, #cccccc);
+  padding: 1.5rem;
+  text-align: center;
+  margin: 2rem 4rem;
+  transform: perspective(100px) rotateX(-5deg);
+  border-radius: 4px;
+  color: #192133;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.seating-layout {
+  margin: 2rem auto;
+  max-width: 1000px;
+}
+
+.seat-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.section-title {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.row-label {
+  min-width: 30px;
+  text-align: center;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* Update section styling to match the theme */
+.section {
+  margin: 0 4rem 2rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section h3 {
+  color: #ffffff;
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+}
