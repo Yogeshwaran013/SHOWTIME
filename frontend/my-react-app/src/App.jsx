@@ -3,12 +3,14 @@ import './App.css';
 import './movie.css';
 import './styles/Profile.css'
 import './styles/AdminDashboard.css';
+import './styles/AdminLogin.css';
 
 import Login from './pages/Login';
 import Movies from './pages/Movie';
 import About from './pages/about';
 import BookingPage from './pages/BookingPage';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminLogin from './pages/AdminLogin';
 import Profile from './pages/Profile';
 
 function App() {
@@ -19,6 +21,7 @@ function App() {
         <Route path="/movies" element={<Movies />} />
         <Route path="/about" element={<About/>} />
         <Route path="/booking/:movieId/:screen/:time" element={<BookingPage />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>

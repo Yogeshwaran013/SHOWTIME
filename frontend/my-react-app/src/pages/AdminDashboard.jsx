@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 // Add this before the AdminDashboard component
 const convertTo12Hour = (time24) => {
@@ -25,6 +26,7 @@ const convertTo24Hour = (time12) => {
 };
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,11 +46,20 @@ const AdminDashboard = () => {
   const [price, setPrice] = useState(200);
   const [assignedMovies, setAssignedMovies] = useState([]);
 
-  // Fetch both TMDB and local movies
+  const handleLogout = () => {
+    sessionStorage.removeItem('isAdmin');
+    navigate('/admin-login');
+  };
+
   useEffect(() => {
+    const isAdmin = sessionStorage.getItem('isAdmin');
+    if (!isAdmin) {
+      navigate('/admin-login');
+      return;
+    }
     fetchMovies();
     fetchAssignedMovies();
-  }, []);
+  }, [navigate]);
 
   const fetchMovies = async () => {
     try {
@@ -157,7 +168,10 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard">
-      <h1>Movie Screen Management</h1>
+      <div className="admin-header">
+        <h1>Movie Screen Management</h1>
+        <button className="logout-btn" onClick={handleLogout}>Logout</button>
+      </div>
       
       <div className="movies-list">
         <h2>Available Movies</h2>
