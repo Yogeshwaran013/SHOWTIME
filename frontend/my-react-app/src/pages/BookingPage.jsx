@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './BookingPage.css';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default function BookingPage() {
   const { movieId, screen, time } = useParams();
@@ -26,7 +27,7 @@ export default function BookingPage() {
       try {
         setLoading(true);
         const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${movieId}?api_key=4392246991f5d21361c98a57b519cffc`
+          `https://api.themoviedb.org/3/movie/${movieId}?api_key=${import.meta.env.VITE_MOVIE_API_KEY}`
         );
         const data = await response.json();
         setMovieDetails(data);
@@ -43,7 +44,7 @@ export default function BookingPage() {
   const fetchBookedSeats = async () => {
     try {
       const showDate = new Date().toISOString().split('T')[0]; // Current date
-      const response = await axios.get(`http://localhost:5000/api/bookings/booked-seats`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/bookings/booked-seats`, {
         params: {
           movieId,
           screen,
@@ -72,8 +73,17 @@ export default function BookingPage() {
         return prev.filter(seat => seat !== seatNumber);
       }
       // Check if maximum seats are already selected
-      if (prev.length >= 3) {
-        alert('Maximum 3 seats allowed');
+      if (prev.length >= 10) {
+        Swal.fire({
+          title: 'Maximum Seats Reached',
+          text: 'You can only select up to 10 seats',
+          icon: 'warning',
+          confirmButtonText: 'OK',
+          background: '#192133',
+          color: '#fff',
+          iconColor: '#e50914',
+          confirmButtonColor: '#e50914'
+        });
         return prev;
       }
       // Add new seat
@@ -127,7 +137,15 @@ export default function BookingPage() {
 
   const handleBooking = async () => {
     if (selectedSeats.length === 0) {
-      alert('Please select at least one seat');
+      Swal.fire({
+        title: 'No Seats Selected',
+        text: 'Please select at least one seat',
+        icon: 'warning',
+        background: '#192133',
+        color: '#fff',
+        iconColor: '#e50914',
+        confirmButtonColor: '#e50914'
+      });
       return;
     }
 
@@ -136,7 +154,15 @@ export default function BookingPage() {
       const userEmail = sessionStorage.getItem('userEmail');
       
       if (!userEmail) {
-        alert('Please login to book tickets');
+        Swal.fire({
+          title: 'Authentication Required',
+          text: 'Please login to book tickets',
+          icon: 'error',
+          background: '#192133',
+          color: '#fff',
+          iconColor: '#e50914',
+          confirmButtonColor: '#e50914'
+        });
         navigate('/', { replace: true });
         return;
       }
@@ -159,10 +185,24 @@ export default function BookingPage() {
         }
       }
 
-      const response = await axios.post('http://localhost:5000/api/bookings', bookingData);
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/bookings`, bookingData);
 
       if (response.status === 201) {
-        alert('Booking confirmed successfully!');
+        Swal.fire({
+          title: 'Booking Confirmed! 🎫',
+          text: 'Your tickets have been booked successfully',
+          icon: 'success',
+          background: '#192133',
+          color: '#fff',
+          iconColor: '#28a745',
+          confirmButtonColor: '#e50914',
+          showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+          }
+        });
         await fetchBookedSeats();
         setSelectedSeats([]);
         navigate('/movies');
@@ -170,7 +210,15 @@ export default function BookingPage() {
     } catch (error) {
       console.error('Booking failed:', error);
       const errorMessage = error.response?.data?.message || 'Failed to process booking. Please try again.';
-      alert(errorMessage);
+      Swal.fire({
+        title: 'Booking Failed',
+        text: errorMessage,
+        icon: 'error',
+        background: '#192133',
+        color: '#fff',
+        iconColor: '#e50914',
+        confirmButtonColor: '#e50914'
+      });
     }
   };
 

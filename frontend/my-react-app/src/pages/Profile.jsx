@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/Profile.css';
+import Swal from 'sweetalert2';
 
 export default function Profile() {
     const [user, setUser] = useState({
@@ -11,6 +12,8 @@ export default function Profile() {
     });
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+    const [newEmail, setNewEmail] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,10 +27,11 @@ export default function Profile() {
             }
 
             try {
-                const response = await axios.get('http://localhost:5000/api/auth/profile', {
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/profile`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setUser(response.data);
+                setNewEmail(response.data.email);
             } catch (error) {
                 console.error('Error fetching user data:', error);
             }
@@ -38,7 +42,7 @@ export default function Profile() {
             const userEmail = sessionStorage.getItem('userEmail');
 
             try {
-                const response = await axios.get(`http://localhost:5000/api/bookings/user/${userEmail}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/bookings/user/${userEmail}`);
                 setBookings(response.data);
             } catch (error) {
                 console.error('Error fetching bookings:', error);
@@ -59,7 +63,7 @@ export default function Profile() {
             
             try {
                 const token = sessionStorage.getItem('token');
-                const response = await axios.post('http://localhost:5000/api/auth/upload-photo', formData, {
+                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/upload-photo`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         Authorization: `Bearer ${token}`
@@ -68,8 +72,97 @@ export default function Profile() {
                 setUser(prev => ({ ...prev, profilePhoto: response.data.photoUrl }));
             } catch (error) {
                 console.error('Error uploading photo:', error);
-                alert('Failed to upload photo');
+                Swal.fire({
+                    title: 'Upload Failed',
+                    text: 'Failed to upload profile photo',
+                    icon: 'error',
+                    background: '#192133',
+                    color: '#fff',
+                    iconColor: '#e50914',
+                    confirmButtonColor: '#e50914'
+                });
             }
+        }
+    };
+
+    const handleEmailUpdate = async () => {
+        try {
+            const token = sessionStorage.getItem('token');
+            await axios.put(`${import.meta.env.VITE_API_BASE_URL}/auth/update-email`, 
+                { email: newEmail },
+                { headers: { Authorization: `Bearer ${token}` }}
+            );
+            
+            setUser(prev => ({ ...prev, email: newEmail }));
+            sessionStorage.setItem('userEmail', newEmail);
+            setIsEditing(false);
+            
+            Swal.fire({
+                title: 'Success!',
+                text: 'Email updated successfully',
+                icon: 'success',
+                background: '#192133',
+                color: '#fff',
+                iconColor: '#28a745',
+                confirmButtonColor: '#e50914'
+            });
+        } catch (error) {
+            console.error('Error updating email:', error);
+            Swal.fire({
+                title: 'Update Failed',
+                text: 'Failed to update email',
+                icon: 'error',
+                background: '#192133',
+                color: '#fff',
+                iconColor: '#e50914',
+                confirmButtonColor: '#e50914'
+            });
+        }
+    };
+
+    const handleDeleteBooking = async (bookingId) => {
+        try {
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: 'This will permanently delete your booking',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e50914',
+                cancelButtonColor: '#333',
+                confirmButtonText: 'Yes, delete it!',
+                background: '#192133',
+                color: '#fff'
+            });
+
+            if (result.isConfirmed) {
+                const token = sessionStorage.getItem('token');
+                await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/bookings/${bookingId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                
+                setBookings(bookings.filter(booking => booking._id !== bookingId));
+                
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'Your booking has been deleted',
+                    icon: 'success',
+                    background: '#192133',
+                    color: '#fff',
+                    iconColor: '#28a745',
+                    confirmButtonColor: '#e50914'
+                });
+            }
+        } catch (error) {
+            console.error('Error deleting booking:', error);
+            Swal.fire({
+                title: 'Delete Failed',
+                text: 'Failed to delete booking',
+                icon: 'error',
+                background: '#192133',
+                color: '#fff',
+                iconColor: '#e50914',
+                confirmButtonColor: '#e50914'
+            });
         }
     };
 
@@ -99,7 +192,30 @@ export default function Profile() {
                 </div>
                 <div className="profile-info">
                     <h1>{user.fullname}</h1>
-                    <p>{user.email}</p>
+                    {isEditing ? (
+                        <div className="email-edit">
+                            <input
+                                type="email"
+                                value={newEmail}
+                                onChange={(e) => setNewEmail(e.target.value)}
+                                className="email-input"
+                            />
+                            <div className="email-actions">
+                                <button onClick={handleEmailUpdate} className="save-btn">Save</button>
+                                <button onClick={() => {
+                                    setIsEditing(false);
+                                    setNewEmail(user.email);
+                                }} className="cancel-btn">Cancel</button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="email-display">
+                            <p>{user.email}</p>
+                            <button onClick={() => setIsEditing(true)} className="edit-btn">
+                                Edit Email
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -119,6 +235,12 @@ export default function Profile() {
                                     <p>Seats: {booking.seats.join(', ')}</p>
                                     <p>Amount: ₹{booking.totalAmount}</p>
                                 </div>
+                                <button 
+                                    onClick={() => handleDeleteBooking(booking._id)}
+                                    className="delete-booking-btn"
+                                >
+                                    Delete Booking
+                                </button>
                             </div>
                         ))}
                     </div>

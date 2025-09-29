@@ -149,5 +149,38 @@ router.post("/upload-photo", upload.single('profilePhoto'), async (req, res) => 
   }
 });
 
+// Update user email
+router.put("/update-email", async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findById(decoded.userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const { email } = req.body;
+    
+    // Check if email is already in use
+    const existingUser = await User.findOne({ email, _id: { $ne: user._id } });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already in use" });
+    }
+
+    user.email = email;
+    await user.save();
+
+    res.json({ message: "Email updated successfully", email });
+  } catch (error) {
+    console.error('Update email error:', error);
+    res.status(500).json({ message: "Error updating email" });
+  }
+});
+
 // Make sure the export is at the bottom of the file
 export default router;

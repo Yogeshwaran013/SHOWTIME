@@ -86,4 +86,18 @@ router.get('/booked-seats', async (req, res) => {
   }
 });
 
+// Delete a booking
+router.delete('/:id', async (req, res) => {
+  try {
+    const booking = await Booking.findByIdAndDelete(req.params.id);
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+    res.json({ message: 'Booking deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting booking:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export default router;

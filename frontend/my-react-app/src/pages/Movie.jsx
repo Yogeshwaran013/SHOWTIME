@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default function Movies() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,7 +25,7 @@ export default function Movies() {
     
     const fetchAssignedMovies = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/movies/assigned', {
+            const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/movies/assigned`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -67,7 +68,15 @@ export default function Movies() {
   const handleBooking = (movieId, screen, time) => {
     const token = sessionStorage.getItem('token');
     if (!token) {
-        alert('Please login to book tickets');
+        Swal.fire({
+            title: 'Authentication Required',
+            text: 'Please login to book tickets',
+            icon: 'warning',
+            background: '#192133',
+            color: '#fff',
+            iconColor: '#e50914',
+            confirmButtonColor: '#e50914'
+        });
         navigate('/', { replace: true });
         return;
     }

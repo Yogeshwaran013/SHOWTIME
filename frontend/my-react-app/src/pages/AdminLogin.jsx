@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AdminLogin.css';
+import Swal from 'sweetalert2';
 
 export default function AdminLogin() {
     const [credentials, setCredentials] = useState({
@@ -22,9 +23,32 @@ export default function AdminLogin() {
         
         if (credentials.username === 'showtime' && credentials.password === 'master123') {
             sessionStorage.setItem('isAdmin', 'true');
+            Swal.fire({
+                title: 'Welcome Admin! 👋',
+                text: 'Login successful',
+                icon: 'success',
+                background: '#192133',
+                color: '#fff',
+                iconColor: '#28a745',
+                confirmButtonColor: '#e50914',
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                }
+            });
             navigate('/admin');
         } else {
-            setError('Invalid username or password');
+            Swal.fire({
+                title: 'Access Denied',
+                text: 'Invalid username or password',
+                icon: 'error',
+                background: '#192133',
+                color: '#fff',
+                iconColor: '#e50914',
+                confirmButtonColor: '#e50914'
+            });
         }
     };
 

@@ -2,8 +2,7 @@ import { useState } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
-
-
+import Swal from 'sweetalert2';
 
 export default function Login() {
     const [isLogin, setIsLogin] = useState(true)
@@ -28,7 +27,7 @@ export default function Login() {
 
     const validateForm = () => {
         const newErrors = {};
-        
+
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!user.email) {
@@ -36,7 +35,7 @@ export default function Login() {
         } else if (!emailRegex.test(user.email)) {
             newErrors.email = 'Please enter a valid email address';
         }
-    
+
         // Password validation
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         if (!user.password) {
@@ -44,52 +43,87 @@ export default function Login() {
         } else if (!passwordRegex.test(user.password)) {
             newErrors.password = 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character';
         }
-    
+
         // Additional signup validations
         if (!isLogin) {
             if (!user.fullname) {
                 newErrors.fullname = 'Full name is required';
             }
-            
+
             if (!user.cpassword) {
                 newErrors.cpassword = 'Please confirm your password';
             } else if (user.password !== user.cpassword) {
                 newErrors.cpassword = 'Passwords do not match';
             }
         }
-    
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!validateForm()) {
             return;
         }
 
         try {
             const url = isLogin
-                ? "http://localhost:5000/api/auth/login"
-                : "http://localhost:5000/api/auth/register";
-            
+                ? `${import.meta.env.VITE_API_BASE_URL}/auth/login`
+                : `${import.meta.env.VITE_API_BASE_URL}/auth/register`;
+
             const { data } = await axios.post(url, user);
-            setMessage(data.message || "Success!");
 
             if (isLogin && data.token) {
                 // Store in sessionStorage instead of localStorage
                 sessionStorage.setItem('token', data.token);
                 sessionStorage.setItem('userEmail', user.email);
+
+                await Swal.fire({
+                    title: 'Welcome Back! 🎬',
+                    text: 'Login successful',
+                    icon: 'success',
+                    background: '#192133',
+                    color: '#fff',
+                    iconColor: '#28a745',
+                    confirmButtonColor: '#e50914',
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    }
+                });
+
                 navigate("/movies");
             } else {
+                // Registration success
+                await Swal.fire({
+                    title: 'Registration Complete! 🎉',
+                    text: 'Your account has been created successfully',
+                    icon: 'success',
+                    background: '#192133',
+                    color: '#fff',
+                    iconColor: '#28a745',
+                    confirmButtonColor: '#e50914'
+                });
                 setIsLogin(true);
             }
         } catch (error) {
-            setMessage(error.response?.data?.message || "Something went wrong!");
+            console.error('Auth error:', error);
+            Swal.fire({
+                title: 'Error',
+                text: error.response?.data?.message || "Something went wrong!",
+                icon: 'error',
+                background: '#192133',
+                color: '#fff',
+                iconColor: '#e50914',
+                confirmButtonColor: '#e50914'
+            });
         }
     };
-    
+
     return (
         <>
             <div id="loginpage">
@@ -100,14 +134,14 @@ export default function Login() {
                             {!isLogin && (
                                 <div>
                                     <label htmlFor="fullname">Full Name</label>
-                                    <input 
-                                        type="text" 
-                                        id="fullname" 
-                                        name="fullname" 
-                                        placeholder="Enter your full name" 
+                                    <input
+                                        type="text"
+                                        id="fullname"
+                                        name="fullname"
+                                        placeholder="Enter your full name"
                                         onChange={handleChange}
                                         className={errors.fullname ? 'error-input' : ''}
-                                        required 
+                                        required
                                     />
                                     {errors.fullname && <div className="error">{errors.fullname}</div>}
                                 </div>
@@ -115,28 +149,28 @@ export default function Login() {
 
                             <div>
                                 <label htmlFor="email">Email</label>
-                                <input 
-                                    type="email" 
-                                    id="email" 
-                                    name="email" 
-                                    placeholder="Enter your email" 
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    placeholder="Enter your email"
                                     onChange={handleChange}
                                     className={errors.email ? 'error-input' : ''}
-                                    required 
+                                    required
                                 />
                                 {errors.email && <div className="error">{errors.email}</div>}
                             </div>
 
                             <div>
                                 <label htmlFor="password">Password</label>
-                                <input 
-                                    type="password" 
-                                    id="password" 
-                                    name="password" 
-                                    placeholder="Create a password" 
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Create a password"
                                     onChange={handleChange}
                                     className={errors.password ? 'error-input' : ''}
-                                    required 
+                                    required
                                 />
                                 {errors.password && <div className="error">{errors.password}</div>}
                             </div>
@@ -144,28 +178,28 @@ export default function Login() {
                             {!isLogin && (
                                 <div>
                                     <label htmlFor="confirmPassword">Confirm Password</label>
-                                    <input 
-                                        type="password" 
-                                        id="cpassword" 
-                                        name="cpassword" 
-                                        placeholder="Confirm your password" 
+                                    <input
+                                        type="password"
+                                        id="cpassword"
+                                        name="cpassword"
+                                        placeholder="Confirm your password"
                                         onChange={handleChange}
                                         className={errors.cpassword ? 'error-input' : ''}
-                                        required 
+                                        required
                                     />
                                     {errors.cpassword && <div className="error">{errors.cpassword}</div>}
                                 </div>
                             )}
-                            <button  type="submit">{isLogin ? "Login" : "Register"}</button>
+                            <button type="submit">{isLogin ? "Login" : "Register"}</button>
                             <p className="error-msg">{message}</p>
-                            
 
-<div className="form-footer-msg">
-  <p>{isLogin ? "Don't have an account?" : "Already have an account?"}</p>
-</div>
-<div className="top-switch">
-  <span onClick={() => setIsLogin(p => !p)}>{!isLogin ? "Sign In" : "Sign Up"}</span>
-</div>
+
+                            <div className="form-footer-msg">
+                                <p>{isLogin ? "Don't have an account?" : "Already have an account?"}</p>
+                            </div>
+                            <div className="top-switch">
+                                <span onClick={() => setIsLogin(p => !p)}>{!isLogin ? "Sign In" : "Sign Up"}</span>
+                            </div>
 
 
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 // Add this before the AdminDashboard component
 const convertTo12Hour = (time24) => {
@@ -66,11 +67,11 @@ const AdminDashboard = () => {
       setLoading(true);
       // Fetch movies from TMDB API
       const tmdbResponse = await axios.get(
-        `https://api.themoviedb.org/3/discover/movie?api_key=4392246991f5d21361c98a57b519cffc&with_original_language=ta&region=IN&primary_release_date.gte=2021-01-01&primary_release_date.lte=2025-12-31`
+        `https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_MOVIE_API_KEY}&with_original_language=ta&region=IN&primary_release_date.gte=2021-01-01&primary_release_date.lte=2025-12-31`
       );
       
       // Get local database movies
-      const localResponse = await axios.get('http://localhost:5000/api/movies');
+      const localResponse = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/movies`);
       
       // Combine and format movies
       const tmdbMovies = tmdbResponse.data.results.map(movie => ({
@@ -95,7 +96,7 @@ const AdminDashboard = () => {
 
   const fetchAssignedMovies = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/movies/assigned');
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/movies/assigned`);
       setAssignedMovies(response.data);
     } catch (error) {
       console.error('Error fetching assigned movies:', error);
@@ -116,14 +117,30 @@ const AdminDashboard = () => {
         price: Number(price)
       };
 
-      await axios.post('http://localhost:5000/api/movies/assign', movieData);
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/movies/assign`, movieData);
       fetchMovies();
       fetchAssignedMovies();
       setSelectedMovie(null);
-      alert('Movie successfully assigned to screen!');
+      Swal.fire({
+        title: 'Success! 🎬',
+        text: 'Movie successfully assigned to screen',
+        icon: 'success',
+        background: '#192133',
+        color: '#fff',
+        iconColor: '#28a745',
+        confirmButtonColor: '#e50914'
+      });
     } catch (error) {
       console.error('Error saving movie:', error);
-      alert('Failed to assign movie to screen');
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to assign movie to screen',
+        icon: 'error',
+        background: '#192133',
+        color: '#fff',
+        iconColor: '#e50914',
+        confirmButtonColor: '#e50914'
+      });
     }
   };
 
@@ -143,26 +160,86 @@ const AdminDashboard = () => {
 
   const handleDelete = async (movieId) => {
     try {
-      // Remove movie from screen assignment
-      await axios.delete(`http://localhost:5000/api/movies/assign/${movieId}`);
-      fetchMovies();
-      fetchAssignedMovies();
-      alert('Movie removed from screen');
+      await Swal.fire({
+        title: 'Are you sure?',
+        text: 'This will remove the movie from the screen',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e50914',
+        cancelButtonColor: '#333',
+        confirmButtonText: 'Yes, remove it!',
+        background: '#192133',
+        color: '#fff',
+        iconColor: '#e50914'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          // Remove movie from screen assignment
+          await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/movies/assign/${movieId}`);
+          fetchMovies();
+          fetchAssignedMovies();
+          Swal.fire({
+            title: 'Removed!',
+            text: 'Movie has been removed from screen',
+            icon: 'success',
+            background: '#192133',
+            color: '#fff',
+            iconColor: '#28a745',
+            confirmButtonColor: '#e50914'
+          });
+        }
+      });
     } catch (error) {
       console.error('Error removing movie:', error);
-      alert('Failed to remove movie from screen');
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to remove movie from screen',
+        icon: 'error',
+        background: '#192133',
+        color: '#fff',
+        iconColor: '#e50914',
+        confirmButtonColor: '#e50914'
+      });
     }
   };
 
   const handleClearSeats = async (movieId) => {
-    if (window.confirm('Are you sure you want to clear all booked seats for this movie?')) {
-      try {
-        await axios.delete(`http://localhost:5000/api/movies/clear-seats/${movieId}`);
-        alert('All seats cleared successfully');
-      } catch (error) {
-        console.error('Error clearing seats:', error);
-        alert('Failed to clear seats');
+    try {
+      const result = await Swal.fire({
+        title: 'Clear all seats?',
+        text: 'Are you sure you want to clear all booked seats for this movie?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e50914',
+        cancelButtonColor: '#333',
+        confirmButtonText: 'Yes, clear them!',
+        background: '#192133',
+        color: '#fff',
+        iconColor: '#e50914'
+      });
+
+      if (result.isConfirmed) {
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/movies/clear-seats/${movieId}`);
+        Swal.fire({
+          title: 'Cleared!',
+          text: 'All seats have been cleared successfully',
+          icon: 'success',
+          background: '#192133',
+          color: '#fff',
+          iconColor: '#28a745',
+          confirmButtonColor: '#e50914'
+        });
       }
+    } catch (error) {
+      console.error('Error clearing seats:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to clear seats',
+        icon: 'error',
+        background: '#192133',
+        color: '#fff',
+        iconColor: '#e50914',
+        confirmButtonColor: '#e50914'
+      });
     }
   };
 

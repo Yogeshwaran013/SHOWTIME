@@ -172,7 +172,7 @@
     border: 1px ;
     font-style: bold;
     color: black;
-    font-family: itim;
+    /* font-family: itim; */
     list-style: none;
     padding: 0.5rem 0;
     margin: 0;
@@ -226,7 +226,7 @@
   /* about css */
   /* Wrapper to separate the About page layout */
 .about-wrapper {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
   background-color: #fdfdfd;
   min-height: 100vh;
 }
