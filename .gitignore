@@ -1,1 +1,11 @@
 */node_modules/*
+
+# Backend
+/backend/.env
+
+# Frontend
+/frontend/.env
+
+# Node modules
+/backend/node_modules
+/frontend/node_modules
