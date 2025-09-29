@@ -5,6 +5,7 @@
 
 # Frontend
 /frontend/.env
+/frontend/my-react-app/.env
 
 # Node modules
 /backend/node_modules
